@@ -25,15 +25,25 @@ MacroHolder::~MacroHolder()
  *
  * @return true if all keys in m_KeyBind are held
  */
-bool MacroHolder::checkTrigger()
+bool MacroHolder::checkTrigger(int last)
 {
-    bool active = true;
-    // Verify all keys are held
-    for (int & vkCode : *m_KeyBind)
+    // if last isn't final key, return false. This way, we are sure that we meant to activate right this call.
+    if (last != m_KeyBind->back())
     {
-        if (!(GetAsyncKeyState(vkCode) & 0x01))
+        return false;
+    }
+
+    bool active = true;
+    // Verify all keys but last are held
+    for (auto vkCode = m_KeyBind->begin(); vkCode != m_KeyBind->end(); ++vkCode)
+    {
+        if (!(GetAsyncKeyState(*vkCode) & 0x01))
         {
             active = false;
+        }
+        else
+        {
+            std::cout << *vkCode << std::endl;
         }
     }
 

@@ -13,6 +13,7 @@ private:
     bool *m_KeyHeld;
     std::vector <MacroHolder*> *m_MacroHolders;
     HHOOK m_KeyPressHook;
+    int m_LastKey;
 
     static LRESULT CALLBACK staticKeyHook(int nCode, WPARAM wParam, LPARAM lParam);
     LRESULT keyHook(int nCode, WPARAM wParam, LPARAM lParam);

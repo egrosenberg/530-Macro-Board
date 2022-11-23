@@ -53,14 +53,26 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
         return CallNextHookEx(NULL, nCode, wParam, lParam);
     }
 
+    // Convert lParam to low level keyboard event
+    PKBDLLHOOKSTRUCT hStruct = (PKBDLLHOOKSTRUCT)(lParam);
+    // Grab virtual keycode from struct
+    DWORD vCode = hStruct->vkCode;
+    int vcInt = (int)(vCode);
+
     // Only check macros on KeyPress events
-    if (wParam == WM_KEYDOWN)
+    if (wParam == WM_KEYDOWN && vcInt != m_LastKey)
     {
         // Iterate through all MacroHolders
         for (auto & macroHolder : *m_MacroHolders)
         {
-            macroHolder->checkTrigger();
+            macroHolder->checkTrigger(vcInt);
         }
+        m_LastKey = vcInt;
+    }
+    // Reset lastkey if key is released
+    if (wParam == WM_KEYUP && vcInt == m_LastKey)
+    {
+        m_LastKey = -1;
     }
 
     return CallNextHookEx(NULL, nCode,  wParam, lParam);
@@ -75,6 +87,7 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
 InputHandler::InputHandler(HINSTANCE hInstance)
 {
     m_KeyHeld = new bool[1]; // Currently unused, may remove later.
+    m_LastKey = -1;
 
     m_MacroHolders = new std::vector<MacroHolder*>();
 
