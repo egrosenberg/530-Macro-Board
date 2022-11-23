@@ -1,6 +1,6 @@
 #include "InputHandler.h"
 
-static InputHandler *m_SingletonInstance = NULL;
+InputHandler *InputHandler::m_SingletonInstance = NULL;
  
 /**
  * Retrieves / creates the *only* instance of this class we use.
@@ -32,6 +32,8 @@ InputHandler *InputHandler::getSingleton(HINSTANCE hInstance)
  */
 LRESULT InputHandler::staticKeyHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
+    InputHandler *singleton = getSingleton();
+    return singleton->keyHook(nCode, wParam, lParam);
 }
 
 
@@ -46,6 +48,25 @@ LRESULT InputHandler::staticKeyHook(int nCode, WPARAM wParam, LPARAM lParam)
  */
 LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
+    if (nCode < 0) // Keypress not properly logged, skip our hook
+    {
+        return CallNextHookEx(NULL, nCode, wParam, lParam);
+    }
+
+    // Store lParam as a low levek keyboard event
+    PKBDLLHOOKSTRUCT hStruct = (PKBDLLHOOKSTRUCT)(lParam);
+
+    // Only check macros on KeyPress events
+    if (wParam == WM_KEYDOWN)
+    {
+        // Iterate through all MacroHolders
+        for (auto & macroHolder : *m_MacroHolders)
+        {
+            macroHolder.checkTrigger();
+        }
+    }
+
+    return CallNextHookEx(NULL, nCode,  wParam, lParam);
 }
 
 /** 

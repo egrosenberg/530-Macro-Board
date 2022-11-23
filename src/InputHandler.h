@@ -3,6 +3,7 @@
 
 #include "MacroBoard.h"
 #include <iostream>
+#include <algorithm>
 
 class InputHandler
 {
