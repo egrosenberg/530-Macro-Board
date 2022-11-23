@@ -19,3 +19,6 @@ OutputHandler.o: src/OutputHandler.cpp
 
 InputHandler.o: src/InputHandler.cpp
 	$(CC) $(FLAGS) -c src/InputHandler.cpp
+
+clean: 
+	rm -f *.o 
