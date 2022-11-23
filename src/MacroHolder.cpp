@@ -27,6 +27,22 @@ MacroHolder::~MacroHolder()
  */
 bool MacroHolder::checkTrigger()
 {
-    return false;
+    bool active = true;
+    // Verify all keys are held
+    for (int n = 0; n < sizeof(m_KeyBind)/sizeof(m_KeyBind[0]); n++)
+    {
+        if (!(GetAsyncKeyState(m_KeyBind[n]) & 0x01))
+        {
+            active = false;
+        }
+    }
+
+    // Call Macro
+    if (active)
+    {
+        m_OutputHandler->triggerMacro(m_ID);
+    }
+
+    return active;
 }
 
