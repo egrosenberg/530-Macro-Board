@@ -53,9 +53,6 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
         return CallNextHookEx(NULL, nCode, wParam, lParam);
     }
 
-    // Store lParam as a low levek keyboard event
-    PKBDLLHOOKSTRUCT hStruct = (PKBDLLHOOKSTRUCT)(lParam);
-
     // Only check macros on KeyPress events
     if (wParam == WM_KEYDOWN)
     {
@@ -80,6 +77,14 @@ InputHandler::InputHandler(HINSTANCE hInstance)
     m_KeyHeld = new bool[1]; // Currently unused, may remove later.
 
     m_MacroHolders = new std::vector<MacroHolder>();
+
+    m_keyPressHook = SetWindowsHookEx
+    (
+        WH_KEYBOARD_LL,
+        staticKeyHook,
+        hInstance,
+        0
+    );
 }
 
 // Delete member variables from memory

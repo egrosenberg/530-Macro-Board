@@ -9,9 +9,10 @@ class InputHandler
 {
 private:
     static InputHandler *m_SingletonInstance;
-
+    
     bool *m_KeyHeld;
     std::vector <MacroHolder> *m_MacroHolders;
+    HHOOK m_keyPressHook;
 
     static LRESULT CALLBACK staticKeyHook(int nCode, WPARAM wParam, LPARAM lParam);
     LRESULT keyHook(int nCode, WPARAM wParam, LPARAM lParam);
