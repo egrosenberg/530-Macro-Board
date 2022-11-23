@@ -11,8 +11,8 @@ private:
     static InputHandler *m_SingletonInstance;
     
     bool *m_KeyHeld;
-    std::vector <MacroHolder> *m_MacroHolders;
-    HHOOK m_keyPressHook;
+    std::vector <MacroHolder*> *m_MacroHolders;
+    HHOOK m_KeyPressHook;
 
     static LRESULT CALLBACK staticKeyHook(int nCode, WPARAM wParam, LPARAM lParam);
     LRESULT keyHook(int nCode, WPARAM wParam, LPARAM lParam);
@@ -22,7 +22,7 @@ public:
 
     static InputHandler *getSingleton(HINSTANCE hInstance = NULL);
 
-    int addMacro(int ID, INPUT **inputs);
+    int addMacro(int ID, int *keyBind);
     void releaseHook(int ID);
 };
 

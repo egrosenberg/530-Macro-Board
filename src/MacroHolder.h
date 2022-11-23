@@ -21,6 +21,7 @@ public:
     void activate(){m_IsActive = true;}
     void deactivate(){m_IsActive = false;}
     bool checkStatus(){return m_IsActive;}
+    int getID(){return m_ID;}
 }; 
 
 

@@ -59,7 +59,7 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
         // Iterate through all MacroHolders
         for (auto & macroHolder : *m_MacroHolders)
         {
-            macroHolder.checkTrigger();
+            macroHolder->checkTrigger();
         }
     }
 
@@ -76,9 +76,9 @@ InputHandler::InputHandler(HINSTANCE hInstance)
 {
     m_KeyHeld = new bool[1]; // Currently unused, may remove later.
 
-    m_MacroHolders = new std::vector<MacroHolder>();
+    m_MacroHolders = new std::vector<MacroHolder*>();
 
-    m_keyPressHook = SetWindowsHookEx
+    m_KeyPressHook = SetWindowsHookEx
     (
         WH_KEYBOARD_LL,
         staticKeyHook,
@@ -91,6 +91,7 @@ InputHandler::InputHandler(HINSTANCE hInstance)
 InputHandler::~InputHandler()
 {
     delete m_MacroHolders;
+    UnhookWindowsHookEx(m_KeyPressHook);
 }
 
 /**
@@ -100,8 +101,23 @@ InputHandler::~InputHandler()
  * @param **inputs, pointer to array of inputs
  * @return int, positive if successful, 0 or negative if error
  */
-int InputHandler::addMacro(int ID, INPUT **inputs)
+int InputHandler::addMacro(int ID, int *keyBind)
 {
+    // Prevent duplicate Macro IDs
+    for (auto & macroHolder : *m_MacroHolders)
+    {
+        if (macroHolder->getID() == ID)
+        {
+            std::cerr << "ERROR: Duplicate macro not added!" << std::endl;
+            return -1; // Womp womp
+        }
+    }
+
+    // Create new MacroHolder and add to vector
+    MacroHolder *toAdd = new MacroHolder(ID, keyBind);
+    m_MacroHolders->push_back(toAdd);
+
+    return 1; // Success!
 }
 
 /**
@@ -111,5 +127,15 @@ int InputHandler::addMacro(int ID, INPUT **inputs)
  */
 void InputHandler::releaseHook(int ID)
 {
+    // Iterate through MacroHolders and remove whichever MacroHolder has a matching ID
+    m_MacroHolders->erase(
+        std::remove_if(
+            m_MacroHolders->begin(), m_MacroHolders->end(),
+            [ID](const auto & holder) 
+            {
+                return holder->getID() == ID;
+            }
+            ), m_MacroHolders->end());
+
 }
 
