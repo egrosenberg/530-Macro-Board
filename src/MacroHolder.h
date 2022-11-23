@@ -16,7 +16,7 @@ public:
     MacroHolder(int ID, int *keys);
     virtual ~MacroHolder();
 
-    bool checkTrigger(bool **keysHeld);
+    bool checkTrigger();
 
     void activate(){m_IsActive = true;}
     void deactivate(){m_IsActive = false;}

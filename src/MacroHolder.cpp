@@ -23,10 +23,9 @@ MacroHolder::~MacroHolder()
 /**
  * Check if all keys are held. Call macro if is held
  *
- * @param **keysHeld, pointer to array of bools containing input
  * @return true if all keys in m_KeyBind are held
  */
-bool MacroHolder::checkTrigger(bool **keysHeld)
+bool MacroHolder::checkTrigger()
 {
     return false;
 }
