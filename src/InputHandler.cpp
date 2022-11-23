@@ -77,11 +77,15 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
  */
 InputHandler::InputHandler(HINSTANCE hInstance)
 {
+    m_KeyHeld = new bool[1]; // Currently unused, may remove later.
+
+    m_MacroHolders = new std::vector<MacroHolder>();
 }
 
 // Delete member variables from memory
 InputHandler::~InputHandler()
 {
+    delete m_MacroHolders;
 }
 
 /**
