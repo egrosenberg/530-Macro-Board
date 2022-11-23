@@ -4,9 +4,9 @@
  * Constructor
  *
  * @param ID, id of macro
- * @param *keys, array of inputs as int values
+ * @param *keys, pointer to vector of ints corresponding to VK_KEYCODE values
  */
-MacroHolder::MacroHolder(int ID, int *keys)
+MacroHolder::MacroHolder(int ID, std::vector <int> *keys)
 {
     m_ID = ID;
     m_IsActive = true;
@@ -29,9 +29,9 @@ bool MacroHolder::checkTrigger()
 {
     bool active = true;
     // Verify all keys are held
-    for (int n = 0; n < sizeof(m_KeyBind)/sizeof(m_KeyBind[0]); n++)
+    for (int & vkCode : *m_KeyBind)
     {
-        if (!(GetAsyncKeyState(m_KeyBind[n]) & 0x01))
+        if (!(GetAsyncKeyState(vkCode) & 0x01))
         {
             active = false;
         }

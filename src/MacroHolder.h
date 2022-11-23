@@ -8,12 +8,12 @@ class MacroHolder
 private:
     OutputHandler *m_OutputHandler;
     
-    int *m_KeyBind;   
+    std::vector <int> *m_KeyBind;   
     unsigned int m_ID;
     bool m_IsActive;
 
 public:
-    MacroHolder(int ID, int *keys);
+    MacroHolder(int ID, std::vector <int> *keys);
     virtual ~MacroHolder();
 
     bool checkTrigger();

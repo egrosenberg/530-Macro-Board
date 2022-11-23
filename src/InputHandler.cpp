@@ -98,10 +98,10 @@ InputHandler::~InputHandler()
  * Create MacroHolder and add to vector
  *
  * @param ID, id of macro
- * @param **inputs, pointer to array of inputs
+ * @param *keyBind, pointer to vector of corresponding VK_KEYCODE values
  * @return int, positive if successful, 0 or negative if error
  */
-int InputHandler::addMacro(int ID, int *keyBind)
+int InputHandler::addMacro(int ID, std::vector <int> *keyBind)
 {
     // Prevent duplicate Macro IDs
     for (auto & macroHolder : *m_MacroHolders)

@@ -22,7 +22,7 @@ public:
 
     static InputHandler *getSingleton(HINSTANCE hInstance = NULL);
 
-    int addMacro(int ID, int *keyBind);
+    int addMacro(int ID, std::vector <int> *keyBind);
     void releaseHook(int ID);
 };
 
