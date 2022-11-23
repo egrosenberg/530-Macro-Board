@@ -5,4 +5,6 @@
 #include <iostream>  //input / output
 #include <stdio.h>   //system()
 
+#include "MacroBoard.h" // Macroboard files
+
 #endif
