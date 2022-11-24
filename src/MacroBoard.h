@@ -9,7 +9,8 @@ namespace Macro_Board
     typedef struct MacroPkg
     {
         unsigned int ID;
-        INPUT *inputList;
+        INPUT *inputs;
+        int sizeOfInputs;
     } MacroPkg;
 }
 
