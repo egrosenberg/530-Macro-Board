@@ -20,10 +20,8 @@ OutputHandler.o: src/OutputHandler.cpp
 InputHandler.o: src/InputHandler.cpp
 	$(CC) $(FLAGS) -c src/InputHandler.cpp
 
-<<<<<<< HEAD
 MacroInterpreter.o: src/MacroInterpreter.cpp
 	$(CC) $(FLAGS) -c src/MacroInterpreter.cpp
-=======
+
 clean: 
 	rm -f *.o 
->>>>>>> 73909f4e2faf77010cee195efe0d874f5dfcec16
