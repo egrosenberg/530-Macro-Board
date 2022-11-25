@@ -6,7 +6,7 @@
  * @param ID, id of macro
  * @param *keys, pointer to vector of ints corresponding to VK_KEYCODE values
  */
-MacroHolder::MacroHolder(int ID, std::vector <int> *keys)
+MacroHolder::MacroHolder(int ID, std::vector <WORD> *keys)
 {
     m_ID = ID;
     m_IsActive = true;
