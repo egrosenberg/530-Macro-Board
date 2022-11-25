@@ -17,10 +17,12 @@ namespace Macro_Board
 class MacroHolder;
 class InputHandler;
 class OutputHandler;
+class MacroInterpreter;
 
 #include "MacroHolder.h"
 #include "OutputHandler.h"
 #include "InputHandler.h"
+#include "MacroInterpreter.h"
 
 #define VK_LIST_SIZE 255
 
