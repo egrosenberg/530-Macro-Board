@@ -17,12 +17,16 @@ private:
     OutputHandler *m_OutputHandler;
     InputHandler *m_InputHandler;
 
-    std::unordered_map <std::string, short int> *m_VK_Table;
+    std::unordered_map <std::string, WORD> *m_VK_Table;
+    WORD m_LastID;
 
-    void importVKC(std::unordered_map <std::string, short int>*table);
-    short int getVKC(std::string code);
+    void importVKC(std::unordered_map <std::string, WORD>*table);
+    WORD getVKC(std::string code);
 
-    void tokenize(const char **data, std::vector <char*> *tokens);
+    void tokenize(const std::string *data, std::vector <std::string*> *tokens);
+    void makeINPUT(WORD vkCode, bool keyUp, INPUT *input);
+    bool splitMacro(std::string *in, std::string *first, std::string *second);
+    void makeMacro(std::string *line);
     void parseFile(char *fileName);
 public:
     MacroInterpreter();
