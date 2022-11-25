@@ -10,6 +10,7 @@ namespace Macro_Board
     {
         unsigned int ID;
         INPUT *inputList;
+        unsigned int sizeOfInputs;
     } MacroPkg;
 }
 
