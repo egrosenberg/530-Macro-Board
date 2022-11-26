@@ -16,8 +16,12 @@ MacroInterpreter::MacroInterpreter()
 {
     m_VK_Table = new std::unordered_map<std::string, WORD>();
     m_LastID = 0;
+    m_InputHandler = InputHandler::getSingleton();
+    m_OutputHandler = OutputHandler::getSingleton();
 
     importVKC(m_VK_Table);
+
+    parseFile("resources/testMacro");
 }
 
 // Destructor
@@ -38,7 +42,6 @@ WORD MacroInterpreter::getVKC(std::string code)
     auto it = m_VK_Table->find(code);
     if (it != m_VK_Table->end())
     {
-        std::cout << it->second;
         return it->second;
     }
     return 400;
@@ -87,12 +90,14 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
     while (tokenIT != iterEnd)
     {
         std::string *token = new std::string();
+        *token = *tokenIT;
 
         // don't append it the token is a comment
         if (!std::regex_match(*token, COMMENT))
         {
             tokens->push_back(token);
         }
+        tokenIT++;
     }
 }
 
@@ -125,7 +130,7 @@ void MacroInterpreter::makeINPUT(WORD vkCode, bool keyUp, INPUT *input)
 bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::string *second)
 {
     // Find position of colon in macro
-    std::string::size_type pos = first->find(":");
+    std::size_t pos = in->find(':');
 
     if (pos == std::string::npos)
     {
@@ -153,7 +158,8 @@ void MacroInterpreter::makeMacro(std::string *line)
     bool split = splitMacro(line, input, output);
     if (!split)
     {
-        std::cerr << "ERROR: could not split macro: " << line << '\n';
+        std::cerr << "ERROR: could not split macro: " << *line << '\n';
+        return;
     }
 
     // vector to hold tokens we are currently working with
@@ -167,10 +173,17 @@ void MacroInterpreter::makeMacro(std::string *line)
     for (auto & token : *tokens)
     {
         WORD code = getVKC(*token);
+        if (code > 256)
+        {
+            std::cerr << "ERROR: Invalid VK_CODE: " << *token << '\n'; // ERROR
+        }
+
         inCodes->push_back(code);
     }
     m_InputHandler->addMacro(m_LastID, inCodes);
 
+    // Clear tokens buffer
+    tokens->clear();
     // Tokenize macro output
     tokenize(output, tokens);
     // vector to hold INPUTs for macro out
@@ -180,12 +193,19 @@ void MacroInterpreter::makeMacro(std::string *line)
     {
         INPUT down, up;
         WORD code = getVKC(*token);
+        if (code > 256)
+        {
+            std::cerr << "ERROR: Invalid VK_CODE: " << *token << '\n'; // ERROR
+        }
+
         makeINPUT(code, false, &down);
         makeINPUT(code, true, &up);
         outputs->push_back(down);
         outputs->push_back(up);
     }
     //m_OutputHandler->addMacro(m_LastID, outputs);
+
+    ++m_LastID;
 
     delete input;
     delete output;
@@ -211,6 +231,7 @@ void MacroInterpreter::parseFile(char *fileName)
     std::string currentLine;
     while (std::getline(*inFile, currentLine))
     {
+        makeMacro(&currentLine);
     }
 }
 
