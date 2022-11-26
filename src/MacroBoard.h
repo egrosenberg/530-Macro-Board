@@ -9,18 +9,20 @@ namespace Macro_Board
     typedef struct MacroPkg
     {
         unsigned int ID;
-        INPUT *inputs;
-        int sizeOfInputs;
+        INPUT *inputList;
+        unsigned int sizeOfInputs;
     } MacroPkg;
 }
 
 class MacroHolder;
 class InputHandler;
 class OutputHandler;
+class MacroInterpreter;
 
 #include "MacroHolder.h"
 #include "OutputHandler.h"
 #include "InputHandler.h"
+#include "MacroInterpreter.h"
 
 #define VK_LIST_SIZE 255
 

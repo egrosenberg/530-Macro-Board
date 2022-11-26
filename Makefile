@@ -2,7 +2,7 @@ CC = g++         # Compiler Command
 FLAGS = -Wall -g # Compiler Flags
 
 # Object file names
-OBJS = main.o MacroHolder.o OutputHandler.o InputHandler.o
+OBJS = main.o MacroHolder.o OutputHandler.o InputHandler.o MacroInterpreter.o
 
 #Target for all
 all: $(OBJS) 
@@ -19,6 +19,9 @@ OutputHandler.o: src/OutputHandler.cpp
 
 InputHandler.o: src/InputHandler.cpp
 	$(CC) $(FLAGS) -c src/InputHandler.cpp
+
+MacroInterpreter.o: src/MacroInterpreter.cpp
+	$(CC) $(FLAGS) -c src/MacroInterpreter.cpp
 
 clean: 
 	rm -f *.o 
