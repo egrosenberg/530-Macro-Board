@@ -1,18 +1,24 @@
 #include "MacroInterpreter.h"
 
-//const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|=|;|-?[0-9]*\\.?[0-9]+|[A-Za-z0-9_-]+)";
+const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|=|;|-?[0-9]*\\.?[0-9]+|[A-Za-z0-9_-]+)";
 const static char *COMMENT_REGEX = "\\~[^\\\]*";
 const static char *COLON_REGEX = ":";
 const static char *SEMICOLON_REGEX = ";";
 const static char* INPUT_REGEX = "([fF][1][0-2])|([fF]\\d)|(control|windows|alt|shift|delete)|(\\^|#|!|\\+|_|[a-zA-Z0-9])";
-const static char* OUTPUT_REGEX = ".";
+const static char* OUTPUT_REGEX = "^write, |do, |open, ";
+const static char* WRITE_REGEX = "^[Ww]rite, |WRITE, ";
+const static char* OPEN_REGEX = "^[Oo]pen, |OPEN, ";
+const static char* DO_REGEX = "^[Dd]o, |DO, ";
 
-//const static std::regex TOKEN{TOKEN_REGEX};
+const static std::regex TOKEN{TOKEN_REGEX};
 const static std::regex INPUT_REG{INPUT_REGEX};
 const static std::regex OUTPUT_REG{OUTPUT_REGEX};
 const static std::regex COMMENT{COMMENT_REGEX};
 const static std::regex COLON{COLON_REGEX};
 const static std::regex SEMICOLON{SEMICOLON_REGEX};
+const static std::regex WRITE{WRITE_REGEX};
+const static std::regex OPEN{OPEN_REGEX};
+const static std::regex DO{DO_REGEX};
 
 
 // Constructor
@@ -109,24 +115,14 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
 *translates inputs to VKC
 * 
 */
-std::string MacroInterpreter::translate(std::string code)
+void MacroInterpreter::translate(const std::string* data)
 {
-    if (code == "^")
-        return "VK_CONTROL";
+    //if (std::regex_match(*data, WRITE))
+        
+        
 
-    if (code == "#")
-        return "VK_LWIN";
 
-    if (code == "!")
-        return "VK_LMENU";
-
-    if (code == "+")
-        return "VK_SHIFT";
-
-    if (code == "_")
-        return "VK_DELETE";
-
-    return code;
+   
 }
 
 /**
@@ -219,8 +215,9 @@ void MacroInterpreter::makeMacro(std::string *line)
 
     // Clear tokens buffer
     tokens->clear();
+    //translate(output);
     // Tokenize macro output
-    tokenize(output, tokens, OUTPUT_REG);
+    tokenize(output, tokens, TOKEN);
     // vector to hold INPUTs for macro out
     std::vector <INPUT> *outputs = new std::vector<INPUT>();
     // Iterate through all output tokens and add them as INPUTs
