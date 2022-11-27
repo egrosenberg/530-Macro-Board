@@ -53,11 +53,6 @@ bool MacroHolder::checkTrigger(int last, bool **keybdState, UINT aSize)
         if (!status)
         {
             active = false;
-            std::cout << *vkCode << " not pressed " << status << "\n";
-        }
-        else
-        {
-            std::cout << *vkCode << std::endl;
         }
     }
 

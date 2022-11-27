@@ -14,7 +14,7 @@ InputHandler *InputHandler::getSingleton(HINSTANCE hInstance)
     {
         if (hInstance == NULL)
         {
-            std::cout << "ERROR, no HINSTANCE\n";
+            std::cerr << "ERROR, no HINSTANCE\n";
             return NULL;
         }
         m_SingletonInstance = new InputHandler(hInstance);
@@ -64,7 +64,6 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
     {
         // update keyboard state
         m_KeyHeld[vcInt] = true;
-        std::cout << vcInt << " down.\n";
         // Iterate through all MacroHolders
         for (auto & macroHolder : *m_MacroHolders)
         {
@@ -75,7 +74,6 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
     // Reset lastkey if key is released
     if (wParam == WM_KEYUP && vcInt == m_LastKey)
     {
-        std::cout << vcInt << " up.\n";
         m_KeyHeld[vcInt] = false;
         m_LastKey = -1;
     }

@@ -112,9 +112,14 @@ void MacroInterpreter::makeINPUT(WORD vkCode, bool keyUp, INPUT *input)
 {
     input->type = INPUT_KEYBOARD;
     input->ki.wVk = vkCode;
+    // Add unicode tag if unicode
+    if (vkCode >= 0x30 && vkCode <= 0x5A)
+    {
+        input->ki.dwFlags = KEYEVENTF_UNICODE;
+    }
     if (keyUp)
     {
-        input->ki.dwFlags = KEYEVENTF_KEYUP;
+        input->ki.dwFlags |= KEYEVENTF_KEYUP;
     }
 }
 
