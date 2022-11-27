@@ -11,6 +11,11 @@ namespace Macro_Board
         unsigned int ID;
         INPUT *inputList;
         unsigned int sizeOfInputs;
+        MacroPkg(unsigned int id, INPUT *inputs, unsigned int inputSize) : 
+            ID{id},
+            inputList{inputs},
+            sizeOfInputs{inputSize}
+            {}
     } MacroPkg;
 }
 

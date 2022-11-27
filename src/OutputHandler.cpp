@@ -20,17 +20,13 @@ OutputHandler *OutputHandler::getSingleton()
 // Initialize member variables
 OutputHandler::OutputHandler()
 {
-    m_MacroList = new std::vector<Macro_Board::MacroPkg>();
-    uSent = -1;
-
+    m_MacroList = new std::vector<Macro_Board::MacroPkg*>();
 }
 
 // Delete member variables in mem
 OutputHandler::~OutputHandler()
 {
-    delete[] inputKeys;
     delete m_MacroList;
-
 }
 
 /**
@@ -40,20 +36,27 @@ OutputHandler::~OutputHandler()
 * 
 * @param ID, ID of macro to be added to MacroPkg
 * @param inputList, list of inputs sent during tokenizer
+* @return positive number if success, negative if failure
 */
-int OutputHandler::addMacro(int ID, std::vector <INPUT>* inputList)
+int OutputHandler::addMacro(unsigned int ID, std::vector <INPUT>* inputList)
 {
-    inputKeys = new INPUT[inputList->size()];    //convert inputList from vector to array of INPUT
+    // Check for duplicate macros
+    for(auto & macro : *m_MacroList)
+    {
+        if (macro->ID == ID)
+        {
+            return -1;
+        }
+    }
+
+    INPUT *inputKeys = new INPUT[inputList->size()];    //convert inputList from vector to array of INPUT
     std::copy(inputList->begin(), inputList->end(), inputKeys);
     
-    //for(auto & macros : *m_MacroList)     <---- check for duplicates in m_MacroList
-
-    Macro_Board::MacroPkg macro = {ID, inputKeys, inputList->size()};    //create MacroPkg, pass the given ID and converted inputList
+    //create MacroPkg, pass the given ID and converted inputList
+    Macro_Board::MacroPkg *macro = new Macro_Board::MacroPkg(ID, inputKeys, inputList->size());
     m_MacroList->push_back(macro);  //append new MacroPkg to m_MacroList vector
 
-    
-
-    return -1;
+    return 1;
 }
 
 
@@ -69,18 +72,21 @@ int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
 {
     
     //iterate every macro in m_MacroList, if it matches the ID passed to the function, then trigger the macro to produce keystrokes/clicks/mouse motion
-    for (auto & macros : *m_MacroList)                
+    for (auto & macro : *m_MacroList)                
     {
-        if (macros.ID == ID)
+        if (macro->ID == ID)
         {
-            uSent = SendInput(macros.sizeOfInputs, macros.inputList, sizeof(INPUT));      
-            if (uSent == macros.sizeOfInputs)
+            UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));      
+            if (uSent == macro->sizeOfInputs)
+            {
+                return 1;
+            }
+            else
+            {
                 return -1;
+            }
         }
     }
-
-    
-        
 
     return -1;
 }
