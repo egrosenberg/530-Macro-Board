@@ -13,11 +13,6 @@ MacroHolder::MacroHolder(int ID, std::vector <WORD> *keys)
     m_KeyBind = keys;
 
     m_OutputHandler = OutputHandler::getSingleton();
-    for (auto & key : *m_KeyBind)
-    {
-        std::cout << key << ' ';
-    }
-    std::cout << '\n';
 }
 
 // delete member variables from mem

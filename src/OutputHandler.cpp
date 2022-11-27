@@ -56,8 +56,6 @@ int OutputHandler::addMacro(unsigned int ID, std::vector <INPUT>* inputList)
     Macro_Board::MacroPkg *macro = new Macro_Board::MacroPkg(ID, inputKeys, inputList->size());
     m_MacroList->push_back(macro);  //append new MacroPkg to m_MacroList vector
 
-    std::cout << "Added Macro #" << ID << '\n';
-
     return 1;
 }
 
@@ -78,16 +76,14 @@ int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
     {
         if (macro->ID == ID)
         {
-            std::cout << ID << ": ";
             UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));      
             if (uSent == macro->sizeOfInputs)
             {
-                std::cout << "success\n";
                 return 1;
             }
             else
             {
-                std::cout << "failure\n";
+                std::cerr << "ERROR in OutputHandler: failed to send inputs. Macro ID: " << ID << '\n';
                 return -1;
             }
         }
