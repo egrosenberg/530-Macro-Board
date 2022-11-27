@@ -71,9 +71,9 @@ int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
     //iterate every macro in m_MacroList, if it matches the ID passed to the function, then trigger the macro to produce keystrokes/clicks/mouse motion
     for (auto & macros : *m_MacroList)                
     {
-        if (macros.ID = ID)
+        if (macros.ID == ID)
         {
-            uSent = SendInput(macros.sizeOfInputs, macros.inputs, sizeof(INPUT));      
+            uSent = SendInput(macros.sizeOfInputs, macros.inputList, sizeof(INPUT));      
             if (uSent == macros.sizeOfInputs)
                 return -1;
         }
