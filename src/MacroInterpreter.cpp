@@ -203,7 +203,7 @@ void MacroInterpreter::makeMacro(std::string *line)
         outputs->push_back(down);
         outputs->push_back(up);
     }
-    //m_OutputHandler->addMacro(m_LastID, outputs);
+    m_OutputHandler->addMacro(m_LastID, outputs);
 
     ++m_LastID;
 
