@@ -23,7 +23,8 @@ private:
     void importVKC(std::unordered_map <std::string, WORD>*table);
     WORD getVKC(std::string code);
 
-    void tokenize(const std::string *data, std::vector <std::string*> *tokens);
+    void tokenize(const std::string *data, std::vector <std::string*> *tokens, std::regex TOKEN);
+    std::string MacroInterpreter::translate(std::string code);
     void makeINPUT(WORD vkCode, bool keyUp, INPUT *input);
     bool splitMacro(std::string *in, std::string *first, std::string *second);
     void makeMacro(std::string *line);

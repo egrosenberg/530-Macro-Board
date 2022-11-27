@@ -1,11 +1,15 @@
 #include "MacroInterpreter.h"
 
-const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|=|;|-?[0-9]*\\.?[0-9]+|[A-Za-z0-9_-]+)";
-const static char *COMMENT_REGEX = "#[^\\n]*";
+//const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|=|;|-?[0-9]*\\.?[0-9]+|[A-Za-z0-9_-]+)";
+const static char *COMMENT_REGEX = "\\~[^\\\]*";
 const static char *COLON_REGEX = ":";
 const static char *SEMICOLON_REGEX = ";";
+const static char* INPUT_REGEX = "([fF][1][0-2])|([fF]\\d)|(control|windows|alt|shift|delete)|(\\^|#|!|\\+|_|[a-zA-Z0-9])";
+const static char* OUTPUT_REGEX = ".";
 
-const static std::regex TOKEN{TOKEN_REGEX};
+//const static std::regex TOKEN{TOKEN_REGEX};
+const static std::regex INPUT_REG{INPUT_REGEX};
+const static std::regex OUTPUT_REG{OUTPUT_REGEX};
 const static std::regex COMMENT{COMMENT_REGEX};
 const static std::regex COLON{COLON_REGEX};
 const static std::regex SEMICOLON{SEMICOLON_REGEX};
@@ -80,7 +84,7 @@ void MacroInterpreter::importVKC(std::unordered_map <std::string, WORD> *table)
  * @param data, pointer to c-string containing the data to tokenize
  * @param tokens, pointer to vector of c-strings to store tokens in
  */
-void MacroInterpreter::tokenize(const std::string *data, std::vector <std::string*> *tokens)
+void MacroInterpreter::tokenize(const std::string *data, std::vector <std::string*> *tokens, std::regex TOKEN)
 {
     // Iterator for regex tokens
     std::sregex_token_iterator tokenIT{data->begin(), data->end(), TOKEN};
@@ -99,6 +103,30 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
         }
         tokenIT++;
     }
+}
+
+/**
+*translates inputs to VKC
+* 
+*/
+std::string MacroInterpreter::translate(std::string code)
+{
+    if (code == "^")
+        return "VK_CONTROL";
+
+    if (code == "#")
+        return "VK_LWIN";
+
+    if (code == "!")
+        return "VK_LMENU";
+
+    if (code == "+")
+        return "VK_SHIFT";
+
+    if (code == "_")
+        return "VK_DELETE";
+
+    return code;
 }
 
 /**
@@ -173,7 +201,7 @@ void MacroInterpreter::makeMacro(std::string *line)
     std::vector <std::string*> *tokens = new std::vector<std::string*>();
 
     // Tokenize and create macro input
-    tokenize(input, tokens);
+    tokenize(input, tokens, INPUT_REG);
     // vector to hold key bind, will be stored in InputHandler
     std::vector <WORD> *inCodes = new std::vector<WORD>();
     // Iterate through all input tokens and add their vk-codes
@@ -192,7 +220,7 @@ void MacroInterpreter::makeMacro(std::string *line)
     // Clear tokens buffer
     tokens->clear();
     // Tokenize macro output
-    tokenize(output, tokens);
+    tokenize(output, tokens, OUTPUT_REG);
     // vector to hold INPUTs for macro out
     std::vector <INPUT> *outputs = new std::vector<INPUT>();
     // Iterate through all output tokens and add them as INPUTs
