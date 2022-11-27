@@ -5,7 +5,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
     InputHandler *iHandle = InputHandler::getSingleton(hInstance);
     
-    char *path = "resources/testMacro";
+    const char *path = DEFAULT_MACRO_PATH;
     MacroInterpreter *interpreter = new MacroInterpreter(path);
 
 

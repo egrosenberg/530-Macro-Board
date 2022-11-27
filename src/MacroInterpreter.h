@@ -27,9 +27,9 @@ private:
     void makeINPUT(WORD vkCode, bool keyUp, INPUT *input);
     bool splitMacro(std::string *in, std::string *first, std::string *second);
     void makeMacro(std::string *line);
-    void parseFile(char *fileName);
+    void parseFile(const char *fileName);
 public:
-    MacroInterpreter(char *path);
+    MacroInterpreter(const char *path);
     virtual ~MacroInterpreter();
 };
 

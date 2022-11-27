@@ -12,7 +12,7 @@ const static std::regex SEMICOLON{SEMICOLON_REGEX};
 
 
 // Constructor
-MacroInterpreter::MacroInterpreter(char *path)
+MacroInterpreter::MacroInterpreter(const char *path)
 {
     m_VK_Table = new std::unordered_map<std::string, WORD>();
     m_LastID = 0;
@@ -244,7 +244,7 @@ void MacroInterpreter::makeMacro(std::string *line)
  *
  * @param fileName, c-string containing the name of the file to read from 
  */
-void MacroInterpreter::parseFile(char *fileName)
+void MacroInterpreter::parseFile(const char *fileName)
 {
     // Create a new input stream from file containing macros
     std::ifstream *inFile = new std::ifstream(fileName);

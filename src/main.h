@@ -7,4 +7,6 @@
 
 #include "MacroBoard.h" // Macroboard files
 
+#define DEFAULT_MACRO_PATH "resources/testMacro"
+
 #endif
