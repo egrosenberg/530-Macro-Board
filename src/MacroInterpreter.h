@@ -29,7 +29,7 @@ private:
     void makeMacro(std::string *line);
     void parseFile(char *fileName);
 public:
-    MacroInterpreter();
+    MacroInterpreter(char *path);
     virtual ~MacroInterpreter();
 };
 

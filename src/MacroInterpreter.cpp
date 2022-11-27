@@ -12,7 +12,7 @@ const static std::regex SEMICOLON{SEMICOLON_REGEX};
 
 
 // Constructor
-MacroInterpreter::MacroInterpreter()
+MacroInterpreter::MacroInterpreter(char *path)
 {
     m_VK_Table = new std::unordered_map<std::string, WORD>();
     m_LastID = 0;
@@ -21,7 +21,7 @@ MacroInterpreter::MacroInterpreter()
 
     importVKC(m_VK_Table);
 
-    parseFile("resources/testMacro");
+    parseFile(path);
 }
 
 // Destructor

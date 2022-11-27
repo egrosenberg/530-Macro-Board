@@ -29,6 +29,6 @@ class MacroInterpreter;
 #include "InputHandler.h"
 #include "MacroInterpreter.h"
 
-#define VK_LIST_SIZE 255
+#define VK_LIST_SIZE 256
 
 #endif

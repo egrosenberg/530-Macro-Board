@@ -16,7 +16,7 @@ public:
     MacroHolder(int ID, std::vector <WORD> *keys);
     virtual ~MacroHolder();
 
-    bool checkTrigger(int last);
+    bool checkTrigger(int last, bool **keybdState, UINT aSize);
 
     void activate(){m_IsActive = true;}
     void deactivate(){m_IsActive = false;}

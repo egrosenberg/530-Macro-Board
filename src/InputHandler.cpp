@@ -62,16 +62,21 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
     // Only check macros on KeyPress events
     if (wParam == WM_KEYDOWN && vcInt != m_LastKey)
     {
+        // update keyboard state
+        m_KeyHeld[vcInt] = true;
+        std::cout << vcInt << " down.\n";
         // Iterate through all MacroHolders
         for (auto & macroHolder : *m_MacroHolders)
         {
-            macroHolder->checkTrigger(vcInt);
+            macroHolder->checkTrigger(vcInt, &m_KeyHeld, VK_LIST_SIZE);
         }
         m_LastKey = vcInt;
     }
     // Reset lastkey if key is released
     if (wParam == WM_KEYUP && vcInt == m_LastKey)
     {
+        std::cout << vcInt << " up.\n";
+        m_KeyHeld[vcInt] = false;
         m_LastKey = -1;
     }
 
@@ -86,7 +91,7 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
  */
 InputHandler::InputHandler(HINSTANCE hInstance)
 {
-    m_KeyHeld = new bool[1]; // Currently unused, may remove later.
+    m_KeyHeld = new bool[VK_LIST_SIZE]; // Currently unused, may remove later.
     m_LastKey = -1;
 
     m_MacroHolders = new std::vector<MacroHolder*>();
