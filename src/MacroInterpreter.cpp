@@ -112,10 +112,12 @@ void MacroInterpreter::makeINPUT(WORD vkCode, bool keyUp, INPUT *input)
 {
     input->type = INPUT_KEYBOARD;
     input->ki.wVk = vkCode;
+    input->ki.wScan = (WORD)MapVirtualKey(vkCode, 0);
+    input->ki.dwFlags = KEYEVENTF_SCANCODE;
     // Add unicode tag if unicode
     if (vkCode >= 0x30 && vkCode <= 0x5A)
     {
-        input->ki.dwFlags = KEYEVENTF_UNICODE;
+        input->ki.dwFlags |= KEYEVENTF_UNICODE;
     }
     if (keyUp)
     {
@@ -196,17 +198,37 @@ void MacroInterpreter::makeMacro(std::string *line)
     // Iterate through all output tokens and add them as INPUTs
     for (auto & token : *tokens)
     {
-        INPUT down, up;
+        bool is_up = true;
+        bool is_down = true;
+        if (token->length() > 3 && (token->substr(token->size()-3, 3) == "_UP"))
+        {
+            is_down = false;
+            *token = token->substr(0, token->size()-3);
+        }
+        else if (token->length() > 5 && (token->substr(token->size()-5, 5), "_DOWN"))
+        {
+            is_up = false;
+            *token = token->substr(0, token->size()-5);
+        }
+        
         WORD code = getVKC(*token);
         if (code > 256)
         {
             std::cerr << "ERROR: Invalid VK_CODE: " << *token << '\n'; // ERROR
         }
 
-        makeINPUT(code, false, &down);
-        makeINPUT(code, true, &up);
-        outputs->push_back(down);
-        outputs->push_back(up);
+        INPUT down, up;
+
+        if (is_down)
+        {
+            makeINPUT(code, false, &down);
+            outputs->push_back(down);
+        }
+        if(is_up)
+        {
+            makeINPUT(code, true, &up);
+            outputs->push_back(up);
+        }
     }
     m_OutputHandler->addMacro(m_LastID, outputs);
 
