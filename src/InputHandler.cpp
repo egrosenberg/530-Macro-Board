@@ -64,16 +64,16 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
     {
         // update keyboard state
         m_KeyHeld[vcInt] = true;
-        // Iterate through all MacroHolders
-        for (auto & macroHolder : *m_MacroHolders)
-        {
-            macroHolder->checkTrigger(vcInt, &m_KeyHeld, VK_LIST_SIZE);
-        }
         m_LastKey = vcInt;
     }
     // Reset lastkey if key is released
     if (wParam == WM_KEYUP && vcInt == m_LastKey)
     {
+        // Iterate through all MacroHolders
+        for (auto & macroHolder : *m_MacroHolders)
+        {
+            macroHolder->checkTrigger(vcInt, &m_KeyHeld, VK_LIST_SIZE);
+        }
         m_KeyHeld[vcInt] = false;
         m_LastKey = -1;
     }
