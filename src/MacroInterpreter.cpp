@@ -264,23 +264,17 @@ void MacroInterpreter::makeMacro(std::string *line)
 
         INPUT down, up;
 
-        if (is_down && !is_up)
+        if (is_down)
         {
             makeINPUT(code, false, &down);
             outputs->push_back(down);
         }
-        if(is_up && !is_down)
+        if(is_up)
         {
-            makeINPUT(code, true, &up);
+            makeINPUT(code, false, &up); //should pass true but some reason crashes my PC 
             outputs->push_back(up);
         }
-        if (is_up && is_down)
-        {
-            makeINPUT(code, false, &down);
-            outputs->push_back(down);
-            makeINPUT(code, false, &up);
-            outputs->push_back(up);
-        }
+        
     }
     m_OutputHandler->addMacro(m_LastID, outputs);
 
