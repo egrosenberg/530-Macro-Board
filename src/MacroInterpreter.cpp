@@ -264,14 +264,21 @@ void MacroInterpreter::makeMacro(std::string *line)
 
         INPUT down, up;
 
-        if (is_down)
+        if (is_down && !is_up)
         {
             makeINPUT(code, false, &down);
             outputs->push_back(down);
         }
-        if(is_up)
+        if(is_up && !is_down)
         {
             makeINPUT(code, true, &up);
+            outputs->push_back(up);
+        }
+        if (is_up && is_down)
+        {
+            makeINPUT(code, false, &down);
+            outputs->push_back(down);
+            makeINPUT(code, false, &up);
             outputs->push_back(up);
         }
     }
