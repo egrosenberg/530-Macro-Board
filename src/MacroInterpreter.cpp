@@ -6,10 +6,14 @@ const static char *COLON_REGEX = ":";
 const static char *SEMICOLON_REGEX = ";";
 const static char* INPUT_REGEX = "([fF][1][0-2])|([fF]\\d)|(control|windows|alt|shift|delete)|(\\^|#|!|\\+|_|[a-zA-Z0-9])";
 const static char* OUTPUT_REGEX = "^write, |do, |open, ";
-const static char* WRITE_REGEX = "^[Ww]rite, |WRITE, ";
+const static char* WRITE_REGEX = "write, ";
 const static char* OPEN_REGEX = "^[Oo]pen, |OPEN, ";
-const static char* DO_REGEX = "^[Dd]o, |DO, ";
+const static char* DO_REGEX = "^[Dd]o, |DO,";
+const static char* ALL_REGEX = ".";
+const static char* WRITE_TOKEN_REGEX = "(write, )(.+)";
 
+const static std::regex WRITE_TOKEN{WRITE_TOKEN_REGEX};
+const static std::regex TOKENIZE_ALL{ALL_REGEX};
 const static std::regex TOKEN{TOKEN_REGEX};
 const static std::regex INPUT_REG{INPUT_REGEX};
 const static std::regex OUTPUT_REG{OUTPUT_REGEX};
@@ -112,13 +116,22 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
 }
 
 /**
-*translates inputs to VKC
+*
 * 
 */
-void MacroInterpreter::translate(const std::string* data)
+void MacroInterpreter::translate(const std::string* data, std::vector <std::string*>* tokens)
 {
-    //if (std::regex_match(*data, WRITE))
-        
+    std::string newData = "write, ";
+    if (std::regex_match(newData, WRITE))
+    {
+        std::smatch matches;
+        //while (std::regex_search(*data, matches, WRITE_TOKEN))
+            //newData = &matches.str(2);
+            
+        //tokenize(newData, tokens, WRITE_TOKEN);
+    }
+    //delete newData;
+    
         
 
 
@@ -215,9 +228,10 @@ void MacroInterpreter::makeMacro(std::string *line)
 
     // Clear tokens buffer
     tokens->clear();
-    //translate(output);
+
+    translate(output, tokens);
     // Tokenize macro output
-    tokenize(output, tokens, TOKEN);
+    //tokenize(output, tokens, TOKEN);
     // vector to hold INPUTs for macro out
     std::vector <INPUT> *outputs = new std::vector<INPUT>();
     // Iterate through all output tokens and add them as INPUTs
