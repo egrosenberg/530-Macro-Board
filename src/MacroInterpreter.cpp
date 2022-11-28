@@ -6,11 +6,11 @@ const static char *COLON_REGEX = ":";
 const static char *SEMICOLON_REGEX = ";";
 const static char* INPUT_REGEX = "([fF][1][0-2])|([fF]\\d)|(control|windows|alt|shift|delete)|(\\^|#|!|\\+|_|[a-zA-Z0-9])";
 const static char* OUTPUT_REGEX = "^write, |do, |open, ";
-const static char* WRITE_REGEX = "write, ";
+const static char* WRITE_REGEX = "(^[Ww]rite, )";
 const static char* OPEN_REGEX = "^[Oo]pen, |OPEN, ";
 const static char* DO_REGEX = "^[Dd]o, |DO,";
 const static char* ALL_REGEX = ".";
-const static char* WRITE_TOKEN_REGEX = "(write, )(.+)";
+const static char* WRITE_TOKEN_REGEX = "(^[Ww]rite, )(.+)";
 
 const static std::regex WRITE_TOKEN{WRITE_TOKEN_REGEX};
 const static std::regex TOKENIZE_ALL{ALL_REGEX};
@@ -121,15 +121,21 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
 */
 void MacroInterpreter::translate(const std::string* data, std::vector <std::string*>* tokens)
 {
-    std::string newData = "write, ";
-    if (std::regex_match(newData, WRITE))
+    std::string* newData = new std::string();
+    std::smatch matchess;
+    if (std::regex_search(*data, matchess, WRITE))
     {
         std::smatch matches;
-        //while (std::regex_search(*data, matches, WRITE_TOKEN))
-            //newData = &matches.str(2);
-            
-        //tokenize(newData, tokens, WRITE_TOKEN);
+        if (std::regex_search(*data, matches, WRITE_TOKEN))
+        {
+            //data = &matches.str(2);
+
+            tokenize(&matches.str(2), tokens, TOKENIZE_ALL);
+        }
     }
+            
+    
+
     //delete newData;
     
         
@@ -184,7 +190,7 @@ bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::stri
     // Set first to string up to colon
     *first = in->substr(0, pos);
     // Set second to string after colon
-    *second = in->substr(pos + 1);
+    *second = in->substr(pos + 2);
 
     return true;
 }
