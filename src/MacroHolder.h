@@ -11,6 +11,7 @@ private:
     std::vector <WORD> *m_KeyBind;
     unsigned int m_ID;
     bool m_IsActive;
+    bool m_IsRunning;
 
 public:
     MacroHolder(int ID, std::vector <WORD> *keys);
