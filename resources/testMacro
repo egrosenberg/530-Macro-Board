@@ -1,1 +1,10 @@
-Z X : VK_CONTROL_DOWN A VK_CONTROL_UP
+# This is a comment. Comments start with a pound sign
+# Strings of characters must be encolsed in quotation marks
+# Virtual-key Codes aren't case sensitive
+# Macros are composed of an input and output, they must be separated by a colon
+
+VK_LCONTROL H : "Hello, World!" # This macro types hello world when you press control h
+
+VK_LcOnTrOl a : "wOoPs! tHErE goEs AlL mY WoRK! :/" # Virtual-key codes aren't case sensitive :)
+
+VK_lcontol w : "omp womp :(" # They are typo sensitive however! If a key can't be read, it will be omitted from the macro
