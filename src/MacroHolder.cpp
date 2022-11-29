@@ -10,6 +10,7 @@ MacroHolder::MacroHolder(int ID, std::vector <WORD> *keys)
 {
     m_ID = ID;
     m_IsActive = true;
+    m_IsRunning = false;
     m_KeyBind = keys;
 
     m_OutputHandler = OutputHandler::getSingleton();
@@ -30,6 +31,10 @@ MacroHolder::~MacroHolder()
  */
 bool MacroHolder::checkTrigger(int last, bool **keybdState, UINT aSize)
 {
+    if (!m_IsActive || m_IsRunning)
+    {
+        return false; // Not active, don't check
+    }
     if (aSize != VK_LIST_SIZE)
     {
         std::cerr << "ERROR: Keyboard array size mismatch\n";
@@ -54,7 +59,9 @@ bool MacroHolder::checkTrigger(int last, bool **keybdState, UINT aSize)
     // Call Macro
     if (active)
     {
+        m_IsRunning = true;
         m_OutputHandler->triggerMacro(m_ID);
+        m_IsRunning = false;
     }
 
     return active;

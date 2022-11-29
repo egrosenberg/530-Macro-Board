@@ -1,9 +1,10 @@
 #include "MacroInterpreter.h"
 
-const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|=|;|-?[0-9]*\\.?[0-9]+|[A-Za-z0-9_-]+)";
+const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|[^\\n^\\W]+|\"[^\\n]+\")";
 const static char *COMMENT_REGEX = "#[^\\n]*";
 const static char *COLON_REGEX = ":";
 const static char *SEMICOLON_REGEX = ";";
+const static char *STRING_REGEX = "\"[^\\n]*\"";
 const static char* APPLICATION_REGEX = "^https|.exe$";
 
 
@@ -12,6 +13,7 @@ const static std::regex TOKEN{TOKEN_REGEX};
 const static std::regex COMMENT{COMMENT_REGEX};
 const static std::regex COLON{COLON_REGEX};
 const static std::regex SEMICOLON{SEMICOLON_REGEX};
+const static std::regex STRING{STRING_REGEX};
 
 
 // Constructor
@@ -42,6 +44,8 @@ MacroInterpreter::~MacroInterpreter()
  */
 WORD MacroInterpreter::getVKC(std::string code)
 {
+    // Convert code to upper, this way its not case sensitive
+    std::transform(code.begin(), code.end(), code.begin(), ::toupper);
     auto it = m_VK_Table->find(code);
     if (it != m_VK_Table->end())
     {
@@ -96,7 +100,20 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
         *token = *tokenIT;
 
         // don't append it the token is a comment
-        if (!std::regex_match(*token, COMMENT))
+        if (std::regex_match(*token, COMMENT))
+        {
+            break;
+        }
+        else if (std::regex_match(*token, STRING))
+        {
+            for (unsigned int charN = 1; charN < (token->length() - 1); ++charN)
+            {
+                std::string *subtoken = new std::string();
+                *subtoken = token->substr(charN, 1);
+                tokens->push_back(subtoken);
+            }
+        }
+        else
         {
             tokens->push_back(token);
         }
@@ -104,57 +121,35 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
     }
 }
 
-/**
- * Reads through data and puts every token in tokens
- *
- * @param data, pointer to c-string containing the data to tokenize
- * @param tokens, pointer to vector of c-strings to store tokens in
- * @param REGEX, specify the regex to use for tokenization
- * 
- * (NO LONGER BEING USED)
- */
-void MacroInterpreter::tokenize(const std::string* data, std::vector <std::string*>* tokens, std::regex REGEX)
-{
-    // Iterator for regex tokens
-    std::sregex_token_iterator tokenIT{ data->begin(), data->end(), REGEX };
-    std::sregex_token_iterator iterEnd;
 
-    // Iterate through all tokens
-    while (tokenIT != iterEnd)
-    {
-        std::string* token = new std::string();
-        *token = *tokenIT;
-
-        // don't append it the token is a comment
-        if (!std::regex_match(*token, COMMENT))
-        {
-            if (std::regex_match(*token, APPLICATION))  //if it contains .exe or https://
-            {
-                tokens->push_back(token);
-            }
-            
-        }
-        tokenIT++;
-    }
-}
 
 /**
  * Converts shor int into INPUT object
  *
- * @param vkCode, virtual key code to convert to INPUT
+ * @param code, string containing the keycode to convert to input
  * @param keyUp, bool stating whether it is a keyUp press
  * @param input, pointer to INPUT object to store in
  */
-void MacroInterpreter::makeINPUT(WORD vkCode, bool keyUp, INPUT *input)
+void MacroInterpreter::makeINPUT(std::string code, bool keyUp, INPUT *input)
 {
-    input->type = INPUT_KEYBOARD;
-    input->ki.wVk = vkCode;
-    input->ki.wScan = (WORD)MapVirtualKey(vkCode, 0);
-    input->ki.dwFlags = KEYEVENTF_SCANCODE;
-    // Add unicode tag if unicode
-    if (vkCode >= 0x30 && vkCode <= 0x5A)
+    if (code.length() == 1)
     {
-        input->ki.dwFlags |= KEYEVENTF_UNICODE;
+        // Unicode char I REALLY HOPE
+        input->type = INPUT_KEYBOARD;
+        input->ki.wVk = 0;
+        input->ki.wScan = code[0];
+        input->ki.dwFlags = KEYEVENTF_UNICODE;
+    }
+    else
+    {
+        WORD vkCode = getVKC(code);
+        if (vkCode <= 256)
+        {
+            input->type = INPUT_KEYBOARD;
+            input->ki.wVk = vkCode;
+            input->ki.wScan = (WORD)MapVirtualKey(vkCode, 0);
+            input->ki.dwFlags = KEYEVENTF_SCANCODE;
+        }
     }
     if (keyUp)
     {
@@ -210,6 +205,11 @@ bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::stri
  */
 void MacroInterpreter::makeMacro(std::string *line)
 {
+    // Don't make macro if comment or empty
+    if (std::regex_match(*line, COMMENT) || line->length() < 2)
+    {
+        return;
+    }
     // strings to hold our input and output for the macro
     std::string *input = new std::string(), * open_ = new std::string(), *output = new std::string();
     int mode = 0;
@@ -235,6 +235,7 @@ void MacroInterpreter::makeMacro(std::string *line)
         if (code > 256)
         {
             std::cerr << "ERROR: Invalid VK_CODE: " << *token << '\n'; // ERROR
+            continue;
         }
 
         inCodes->push_back(code);
@@ -263,22 +264,16 @@ void MacroInterpreter::makeMacro(std::string *line)
             *token = token->substr(0, token->size()-5);
         }
         
-        WORD code = getVKC(*token);
-        if (code > 256)
-        {
-            std::cerr << "ERROR: Invalid VK_CODE: " << *token << '\n'; // ERROR
-        }
-
         INPUT down, up;
 
         if (is_down)
         {
-            makeINPUT(code, false, &down);
+            makeINPUT(*token, false, &down);
             outputs->push_back(down);
         }
         if(is_up)
         {
-            makeINPUT(code, true, &up);
+            makeINPUT(*token, true, &up);
             outputs->push_back(up);
         }
     }

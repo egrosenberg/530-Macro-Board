@@ -24,8 +24,7 @@ private:
     WORD getVKC(std::string code);
 
     void tokenize(const std::string *data, std::vector <std::string*> *tokens);
-    void tokenize(const std::string* data, std::vector <std::string*>* tokens, std::regex REGEX);
-    void makeINPUT(WORD vkCode, bool keyUp, INPUT *input);
+    void makeINPUT(std::string code, bool keyUp, INPUT *input);
     bool splitMacro(std::string *in, std::string *first, std::string *second, std::string* third);
     void makeMacro(std::string *line);
     void parseFile(const char *fileName);

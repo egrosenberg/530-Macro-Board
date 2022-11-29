@@ -5,11 +5,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 {
     InputHandler *iHandle = InputHandler::getSingleton(hInstance);
     
-    const char *path = DEFAULT_MACRO_PATH;
+    const char *path = (lpCmdLine[0] == NULL) ? DEFAULT_MACRO_PATH : lpCmdLine;
     MacroInterpreter *interpreter = new MacroInterpreter(path);
 
 
-    MessageBox(NULL, "Press OK to stop logging.", "Information", MB_OK);
+    MessageBox(NULL, "Press ok to stop", "macros", MB_OK);
 
     delete iHandle;
     delete interpreter;
