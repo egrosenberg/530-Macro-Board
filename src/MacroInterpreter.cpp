@@ -187,7 +187,7 @@ bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::stri
         // Set first to string up to colon
         *first = in->substr(0, pos);
         // Set second to string after colon
-        *second = in->substr(pos + 1);
+        *third = in->substr(pos + 1);
     }
     else
     {       
