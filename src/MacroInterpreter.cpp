@@ -194,7 +194,7 @@ bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::stri
         // Set first to string up to colon
         *first = in->substr(0, pos);
         // Set second to string after colon
-        *second = in->substr(pos + 2, pos2 - 7);
+        *second = in->substr(pos + 2, pos2 - pos - 2);
         //Set third to string after semicolon
         *third = in->substr(pos2 + 1);
     }
@@ -290,7 +290,7 @@ void MacroInterpreter::makeMacro(std::string *line)
     */
     if (!open_->empty())
     {
-        if (std::regex_search(*open_, APPLICATION))
+        if (!std::regex_search(*open_, APPLICATION))
         {
             mode = 1;
         } //open_ is the string we want to send to addMacro()

@@ -71,15 +71,48 @@ int OutputHandler::addMacro(unsigned int ID, std::vector <INPUT>* inputList, int
 int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
 {
     
-    //iterate every macro in m_MacroList, if it matches the ID passed to the function, then trigger the macro to produce keystrokes/clicks/mouse motion
-    for (auto & macro : *m_MacroList)                
-    {
-        if (macro->ID == ID)
+    /** 
+    * iterate every macro in m_MacroList, if it matches the ID passed to the function, then trigger the macro to produce keystrokes / clicks / mouse motion
+    * if mode is 0 there's no app to open before outputting
+    * if mode is 1, open the app under macro->run_
+    */
+   
+        for (auto& macro : *m_MacroList)
         {
-            UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));      
-            if (uSent == macro->sizeOfInputs)
+            if (macro->ID == ID)
             {
-                return 1;
+                if (macro->mode == 0)
+                {
+                    UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));
+                    if (uSent == macro->sizeOfInputs)
+                    {
+                        return 1;
+                    }
+                    
+                }
+               
+                if (macro->mode == 1)
+                {
+                    STARTUPINFO si = { 0 };
+                    PROCESS_INFORMATION pi = { 0 };
+                    LPCSTR process_ = (LPCSTR)(macro->run_);
+                    BOOL bSuccess = CreateProcessA(process_, NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
+                    if (bSuccess)
+                    {
+                        UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));
+                        if (uSent == macro->sizeOfInputs)
+                        { 
+                            WaitForSingleObject(pi.hProcess, INFINITE);
+                            CloseHandle(pi.hProcess);
+                            CloseHandle(pi.hThread);
+                            return 1; 
+                        }
+                    }
+                    
+                    
+                    //wait until child process exits.
+                    
+                }
             }
             else
             {
@@ -87,7 +120,9 @@ int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
                 return -1;
             }
         }
-    }
+    
+
+    
 
     return -1;
 }
