@@ -121,20 +121,30 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
 /**
  * Converts shor int into INPUT object
  *
- * @param vkCode, virtual key code to convert to INPUT
+ * @param code, string containing the keycode to convert to input
  * @param keyUp, bool stating whether it is a keyUp press
  * @param input, pointer to INPUT object to store in
  */
-void MacroInterpreter::makeINPUT(WORD vkCode, bool keyUp, INPUT *input)
+void MacroInterpreter::makeINPUT(std::string code, bool keyUp, INPUT *input)
 {
-    input->type = INPUT_KEYBOARD;
-    input->ki.wVk = vkCode;
-    input->ki.wScan = (WORD)MapVirtualKey(vkCode, 0);
-    input->ki.dwFlags = KEYEVENTF_SCANCODE;
-    // Add unicode tag if unicode
-    if (vkCode >= 0x30 && vkCode <= 0x5A)
+    if (code.length() == 1)
     {
-        input->ki.dwFlags |= KEYEVENTF_UNICODE;
+        // Unicode char I REALLY HOPE
+        input->type = INPUT_KEYBOARD;
+        input->ki.wVk = 0;
+        input->ki.wScan = code[0];
+        input->ki.dwFlags = KEYEVENTF_UNICODE;
+    }
+    else
+    {
+        WORD vkCode = getVKC(code);
+        if (vkCode <= 256)
+        {
+            input->type = INPUT_KEYBOARD;
+            input->ki.wVk = vkCode;
+            input->ki.wScan = (WORD)MapVirtualKey(vkCode, 0);
+            input->ki.dwFlags = KEYEVENTF_SCANCODE;
+        }
     }
     if (keyUp)
     {
@@ -176,8 +186,8 @@ bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::stri
  */
 void MacroInterpreter::makeMacro(std::string *line)
 {
-    // Don't make macro if comment
-    if (std::regex_match(*line, COMMENT))
+    // Don't make macro if comment or empty
+    if (std::regex_match(*line, COMMENT) || line->length() < 2)
     {
         return;
     }
@@ -205,6 +215,7 @@ void MacroInterpreter::makeMacro(std::string *line)
         if (code > 256)
         {
             std::cerr << "ERROR: Invalid VK_CODE: " << *token << '\n'; // ERROR
+            continue;
         }
 
         inCodes->push_back(code);
@@ -233,22 +244,16 @@ void MacroInterpreter::makeMacro(std::string *line)
             *token = token->substr(0, token->size()-5);
         }
         
-        WORD code = getVKC(*token);
-        if (code > 256)
-        {
-            std::cerr << "ERROR: Invalid VK_CODE: " << *token << '\n'; // ERROR
-        }
-
         INPUT down, up;
 
         if (is_down)
         {
-            makeINPUT(code, false, &down);
+            makeINPUT(*token, false, &down);
             outputs->push_back(down);
         }
         if(is_up)
         {
-            makeINPUT(code, true, &up);
+            makeINPUT(*token, true, &up);
             outputs->push_back(up);
         }
     }
