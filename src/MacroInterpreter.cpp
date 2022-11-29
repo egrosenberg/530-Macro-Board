@@ -1,10 +1,10 @@
 #include "MacroInterpreter.h"
 
-const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|[^\\n^\\W]+|\"[^\\n^\\W]+\")";
+const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|[^\\n^\\W]+|\"[^\\n]+\")";
 const static char *COMMENT_REGEX = "#[^\\n]*";
 const static char *COLON_REGEX = ":";
 const static char *SEMICOLON_REGEX = ";";
-const static char *STRING_REGEX = "\"[^\\n^\\W]*\"";
+const static char *STRING_REGEX = "\"[^\\n]*\"";
 
 const static std::regex TOKEN{TOKEN_REGEX};
 const static std::regex COMMENT{COMMENT_REGEX};
