@@ -93,12 +93,18 @@ int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
                
                 if (macro->mode == 1)
                 {
+                    //convert macro->run_ to char array
+                    std::string temp = macro->run_->c_str();
+                    char* run = &temp[0]; 
+
+
                     STARTUPINFO si = { 0 };
                     PROCESS_INFORMATION pi = { 0 };
-                    LPCSTR process_ = (LPCSTR)(macro->run_);
-                    BOOL bSuccess = CreateProcessA(process_, NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
+                    BOOL bSuccess = CreateProcessA(TEXT(run), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
                     if (bSuccess)
                     {
+                        Sleep(2000);
+                        
                         UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));
                         if (uSent == macro->sizeOfInputs)
                         { 
