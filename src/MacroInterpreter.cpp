@@ -258,7 +258,7 @@ void MacroInterpreter::makeMacro(std::string *line)
             is_down = false;
             *token = token->substr(0, token->size()-3);
         }
-        else if (token->length() > 5 && (token->substr(token->size()-5, 5), "_DOWN"))
+        else if (token->length() > 5 && (token->substr(token->size()-5, 5) == "_DOWN"))
         {
             is_up = false;
             *token = token->substr(0, token->size()-5);
