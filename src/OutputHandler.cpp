@@ -77,55 +77,51 @@ int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
     * if mode is 1, open the app under macro->run_
     */
    
-        for (auto& macro : *m_MacroList)
+    for (auto& macro : *m_MacroList)
+    {
+        if (macro->ID == ID)    //find the matching ID
         {
-            if (macro->ID == ID)
+            if (macro->mode == 0)
             {
-                if (macro->mode == 0)
+                UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));
+                if (uSent == macro->sizeOfInputs)
                 {
+                    return 1;
+                }
+                    
+            }
+               
+            if (macro->mode == 1)
+            {
+                //convert macro->run_ to char array
+                std::string temp = macro->run_->c_str();
+                char* run = &temp[0]; 
+
+
+                STARTUPINFO si = { 0 };
+                PROCESS_INFORMATION pi = { 0 };
+                BOOL bSuccess = CreateProcessA(TEXT(run), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
+                if (bSuccess)
+                {
+                    Sleep(2000);
+                        
                     UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));
                     if (uSent == macro->sizeOfInputs)
-                    {
-                        return 1;
+                    { 
+                        WaitForSingleObject(pi.hProcess, INFINITE);
+                        CloseHandle(pi.hProcess);
+                        CloseHandle(pi.hThread);
+                        return 1; 
                     }
-                    
                 }
-               
-                if (macro->mode == 1)
-                {
-                    //convert macro->run_ to char array
-                    std::string temp = macro->run_->c_str();
-                    char* run = &temp[0]; 
-
-
-                    STARTUPINFO si = { 0 };
-                    PROCESS_INFORMATION pi = { 0 };
-                    BOOL bSuccess = CreateProcessA(TEXT(run), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
-                    if (bSuccess)
-                    {
-                        Sleep(2000);
-                        
-                        UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));
-                        if (uSent == macro->sizeOfInputs)
-                        { 
-                            WaitForSingleObject(pi.hProcess, INFINITE);
-                            CloseHandle(pi.hProcess);
-                            CloseHandle(pi.hThread);
-                            return 1; 
-                        }
-                    }
                     
                     
-                    //wait until child process exits.
+                //wait until child process exits.
                     
-                }
-            }
-            else
-            {
-                std::cerr << "ERROR in OutputHandler: failed to send inputs. Macro ID: " << ID << '\n';
-                return -1;
             }
         }
+        
+    }
     
 
     
