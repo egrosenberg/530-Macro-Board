@@ -3,6 +3,7 @@
 
 #include <windows.h> // Windows API, hooks + input, etc.
 #include <vector>
+#include <string>
 
 namespace Macro_Board
 {
@@ -11,10 +12,14 @@ namespace Macro_Board
         unsigned int ID;
         INPUT *inputList;
         unsigned int sizeOfInputs;
-        MacroPkg(unsigned int id, INPUT *inputs, unsigned int inputSize) : 
+        int mode;
+        std::string *run_;
+        MacroPkg(unsigned int id, INPUT *inputs, unsigned int inputSize, int mode_, std::string *run_) : 
             ID{id},
             inputList{inputs},
-            sizeOfInputs{inputSize}
+            sizeOfInputs{inputSize},
+            mode{mode_},
+            run_{run_}
             {}
     } MacroPkg;
 }

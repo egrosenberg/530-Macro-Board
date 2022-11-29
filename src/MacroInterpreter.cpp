@@ -4,7 +4,10 @@ const static char *TOKEN_REGEX = "(\\[|\\]|#[^\\n]*|=|;|-?[0-9]*\\.?[0-9]+|[A-Za
 const static char *COMMENT_REGEX = "#[^\\n]*";
 const static char *COLON_REGEX = ":";
 const static char *SEMICOLON_REGEX = ";";
+const static char* APPLICATION_REGEX = "^https|.exe$";
 
+
+const static std::regex APPLICATION{APPLICATION_REGEX};
 const static std::regex TOKEN{TOKEN_REGEX};
 const static std::regex COMMENT{COMMENT_REGEX};
 const static std::regex COLON{COLON_REGEX};
@@ -102,6 +105,40 @@ void MacroInterpreter::tokenize(const std::string *data, std::vector <std::strin
 }
 
 /**
+ * Reads through data and puts every token in tokens
+ *
+ * @param data, pointer to c-string containing the data to tokenize
+ * @param tokens, pointer to vector of c-strings to store tokens in
+ * @param REGEX, specify the regex to use for tokenization
+ * 
+ * (NO LONGER BEING USED)
+ */
+void MacroInterpreter::tokenize(const std::string* data, std::vector <std::string*>* tokens, std::regex REGEX)
+{
+    // Iterator for regex tokens
+    std::sregex_token_iterator tokenIT{ data->begin(), data->end(), REGEX };
+    std::sregex_token_iterator iterEnd;
+
+    // Iterate through all tokens
+    while (tokenIT != iterEnd)
+    {
+        std::string* token = new std::string();
+        *token = *tokenIT;
+
+        // don't append it the token is a comment
+        if (!std::regex_match(*token, COMMENT))
+        {
+            if (std::regex_match(*token, APPLICATION))  //if it contains .exe or https://
+            {
+                tokens->push_back(token);
+            }
+            
+        }
+        tokenIT++;
+    }
+}
+
+/**
  * Converts shor int into INPUT object
  *
  * @param vkCode, virtual key code to convert to INPUT
@@ -134,20 +171,34 @@ void MacroInterpreter::makeINPUT(WORD vkCode, bool keyUp, INPUT *input)
  * @param second, pointer to string to hold second half of macro
  * @return bool, true if successful, false if not
  */
-bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::string *second)
+bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::string *second, std::string* third)
 {
     // Find position of colon in macro
     std::size_t pos = in->find(':');
+    std::size_t pos2 = in->find(';', pos+1);
 
     if (pos == std::string::npos)
     {
         return false; // ERROR: not found
     }
 
-    // Set first to string up to colon
-    *first = in->substr(0, pos);
-    // Set second to string after colon
-    *second = in->substr(pos + 1);
+    if (pos2 == std::string::npos)  //only one colon so only split in two
+    {
+        // Set first to string up to colon
+        *first = in->substr(0, pos);
+        // Set second to string after colon
+        *second = in->substr(pos + 1);
+    }
+    else
+    {       
+        // Set first to string up to colon
+        *first = in->substr(0, pos);
+        // Set second to string after colon
+        *second = in->substr(pos + 2, pos2 - 7);
+        //Set third to string after semicolon
+        *third = in->substr(pos2 + 1);
+    }
+    
 
     return true;
 }
@@ -160,9 +211,10 @@ bool MacroInterpreter::splitMacro(std::string *in, std::string *first, std::stri
 void MacroInterpreter::makeMacro(std::string *line)
 {
     // strings to hold our input and output for the macro
-    std::string *input = new std::string(), *output = new std::string();
+    std::string *input = new std::string(), * open_ = new std::string(), *output = new std::string();
+    int mode = 0;
     // Split line
-    bool split = splitMacro(line, input, output);
+    bool split = splitMacro(line, input, open_, output);
     if (!split)
     {
         std::cerr << "ERROR: could not split macro: " << *line << '\n';
@@ -230,13 +282,34 @@ void MacroInterpreter::makeMacro(std::string *line)
             outputs->push_back(up);
         }
     }
-    m_OutputHandler->addMacro(m_LastID, outputs);
+
+    /** if open_ exists:
+    * check if open_ starts with https or ends with .exe
+    * change mode to 1 if regex_match is true
+    * if regex_match is false we should not run the macro since the user probably won't want the output to run in a random window
+    */
+    if (!open_->empty())
+    {
+        if (std::regex_search(*open_, APPLICATION))
+        {
+            mode = 1;
+        } //open_ is the string we want to send to addMacro()
+
+        else
+            std::cerr << "ERROR: Invalid macro" << '\n';
+    }
+
+    m_OutputHandler->addMacro(m_LastID, outputs, mode, open_);
 
     ++m_LastID;
 
+
+    
+
     delete input;
     delete output;
-    delete tokens;    
+    delete open_;
+    delete tokens; 
 }
 
 /**

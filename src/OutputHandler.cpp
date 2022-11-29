@@ -38,7 +38,7 @@ OutputHandler::~OutputHandler()
 * @param inputList, list of inputs sent during tokenizer
 * @return positive number if success, negative if failure
 */
-int OutputHandler::addMacro(unsigned int ID, std::vector <INPUT>* inputList)
+int OutputHandler::addMacro(unsigned int ID, std::vector <INPUT>* inputList, int mode, std::string* run)
 {
     // Check for duplicate macros
     for(auto & macro : *m_MacroList)
@@ -53,7 +53,7 @@ int OutputHandler::addMacro(unsigned int ID, std::vector <INPUT>* inputList)
     std::copy(inputList->begin(), inputList->end(), inputKeys);
     
     //create MacroPkg, pass the given ID and converted inputList
-    Macro_Board::MacroPkg *macro = new Macro_Board::MacroPkg(ID, inputKeys, inputList->size());
+    Macro_Board::MacroPkg *macro = new Macro_Board::MacroPkg(ID, inputKeys, inputList->size(), mode, run);
     m_MacroList->push_back(macro);  //append new MacroPkg to m_MacroList vector
 
     return 1;
