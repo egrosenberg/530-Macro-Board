@@ -5,7 +5,7 @@ const static char *COMMENT_REGEX = "#[^\\n]*";
 const static char *COLON_REGEX = ":";
 const static char *SEMICOLON_REGEX = ";";
 const static char *STRING_REGEX = "\"[^\\n]*\"";
-const static char* APPLICATION_REGEX = "^https|.exe$";
+const static char* APPLICATION_REGEX = "^http[s]?|.exe$|.txt$|.docx$|.rtf$|.csv$|.lnk$";
 
 
 const static std::regex APPLICATION{APPLICATION_REGEX};
