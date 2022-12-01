@@ -108,9 +108,9 @@ int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
                     UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));
                     if (uSent == macro->sizeOfInputs)
                     { 
-                        WaitForSingleObject(pi.hProcess, INFINITE);
-                        CloseHandle(pi.hProcess);
-                        CloseHandle(pi.hThread);
+                        //WaitForSingleObject(pi.hProcess, INFINITE);
+                        //CloseHandle(pi.hProcess);
+                        //CloseHandle(pi.hThread);
                         return 1; 
                     }
                 }

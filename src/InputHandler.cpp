@@ -59,6 +59,7 @@ LRESULT InputHandler::keyHook(int nCode, WPARAM wParam, LPARAM lParam)
     DWORD vCode = hStruct->vkCode;
     int vcInt = (int)(vCode);
 
+    
     // Only check macros on KeyPress events
     if (wParam == WM_KEYDOWN && vcInt != m_LastKey)
     {
@@ -91,6 +92,7 @@ InputHandler::InputHandler(HINSTANCE hInstance)
 {
     m_KeyHeld = new bool[VK_LIST_SIZE]; // Currently unused, may remove later.
     m_LastKey = -1;
+    
 
     m_MacroHolders = new std::vector<MacroHolder*>();
 
@@ -131,6 +133,14 @@ int InputHandler::addMacro(int ID, std::vector <WORD> *keyBind)
 
     // Create new MacroHolder and add to vector
     MacroHolder *toAdd = new MacroHolder(ID, keyBind);
+    //m_KeyHeld[vkc] = false;
+    int* keys = new int[keyBind->size()];    //convert inputList from vector to array of INPUT
+    std::copy(keyBind->begin(), keyBind->end(), keys);
+    for (int i = 0; i < keyBind->size(); i++)
+    {
+        m_KeyHeld[keys[i]] = false;
+    }
+    
     m_MacroHolders->push_back(toAdd);
 
     return 1; // Success!
