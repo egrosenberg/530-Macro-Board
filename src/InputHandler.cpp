@@ -133,8 +133,8 @@ int InputHandler::addMacro(int ID, std::vector <WORD> *keyBind)
 
     // Create new MacroHolder and add to vector
     MacroHolder *toAdd = new MacroHolder(ID, keyBind);
-    //m_KeyHeld[vkc] = false;
-    int* keys = new int[keyBind->size()];    //convert inputList from vector to array of INPUT
+    
+    int* keys = new int[keyBind->size()];    
     std::copy(keyBind->begin(), keyBind->end(), keys);
     for (int i = 0; i < keyBind->size(); i++)
     {

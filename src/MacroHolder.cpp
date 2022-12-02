@@ -54,6 +54,10 @@ bool MacroHolder::checkTrigger(int last, bool **keybdState, UINT aSize)
         {
             active = false;
         }
+        if (status)
+        {
+            (*keybdState)[*vkCode] = false;
+        }
     }
 
     // Call Macro

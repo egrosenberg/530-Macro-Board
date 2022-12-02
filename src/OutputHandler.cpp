@@ -103,8 +103,7 @@ int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
                 BOOL bSuccess = CreateProcessA(TEXT(run), NULL, NULL, NULL, FALSE, NULL, NULL, NULL, &si, &pi);
                 if (bSuccess)
                 {
-                    Sleep(2000);
-                        
+                    Sleep(1500);
                     UINT uSent = SendInput(macro->sizeOfInputs, macro->inputList, sizeof(INPUT));
                     if (uSent == macro->sizeOfInputs)
                     { 

@@ -1,4 +1,5 @@
-Q W : C:\Program Files (x86)\Google\Chrome\Application\chrome.exe ; G O O G L E VK_OEM_PERIOD C O M VK_RETURN
+Z W : C:\Program Files (x86)\Google\Chrome\Application\chrome.exe ; G O O G L E VK_OEM_PERIOD C O M VK_RETURN
 
-vk_lcontrol q : C:\Windows\notepad.exe ; h e l l o
-	
+VK_LCONTROL Q : C:\Windows\notepad.exe ; h e l l o
+
+VK_LCONTROL A : T H I S VK_SPACE W O R K S VK_SPACE T O O
