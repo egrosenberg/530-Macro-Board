@@ -68,7 +68,7 @@ int OutputHandler::addMacro(unsigned int ID, std::vector <INPUT>* inputList, int
  * @param mode, 0 = normal, 1 = send to window (TBD)
  * @return positive number if successful, 0 or negative if not
  */
-int OutputHandler::triggerMacro(unsigned int ID, int mode, HWND *win)
+int OutputHandler::triggerMacro(unsigned int ID, HWND *win)
 {
     
     /** 

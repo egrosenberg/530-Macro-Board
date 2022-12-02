@@ -16,7 +16,7 @@ public:
     static OutputHandler *getSingleton();
 
     int addMacro(unsigned int ID, std::vector <INPUT>* inputList, int mode, std::string* run);
-    int triggerMacro(unsigned int ID, int mode = 0, HWND *win = NULL);
+    int triggerMacro(unsigned int ID, HWND *win = NULL);
     int triggerMacro(std::vector<INPUT> *inputKeys);
 };
 

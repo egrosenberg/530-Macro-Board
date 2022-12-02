@@ -303,7 +303,6 @@ void MacroInterpreter::makeMacro(std::string *line)
 
     delete input;
     delete output;
-    //delete open_;
     delete tokens; 
 }
 
