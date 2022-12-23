@@ -21,3 +21,20 @@ Write a C++ program that uses the Win32 library as well as Windows’ keypress h
 ### Deliverables
 - Program Files
 - Presentation
+
+### How To Use:
+
+# Building:
+mingw32-make
+
+# Running:
+MacroBoard <path-to-macro-file | OPTIONAL>
+
+# Writing a Macro File:
+Macros are NOT case sensitive, unless you are writing a string.
+
+Macro activation input: Either windows virtual-key codes or single letters. Space separated.
+
+Separate input and output with a colon.
+
+Macro outpput: Either windows virtual-key codes or letters. BUT, if you want to output text, wrap your output in quotes.
